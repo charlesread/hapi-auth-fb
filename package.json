@@ -1,12 +1,27 @@
 {
   "name": "hapi-auth-fb",
   "version": "0.0.1",
-  "description": "",
+  "description": "Facebook OAuth 2 plugin for Hapi apps",
+  "keywords": [
+    "hapi",
+    "facebook",
+    "fb",
+    "authentication",
+    "oauth"
+  ],
+  "bugs": {
+    "url": "https://github.com/charlesread/hapi-auth-fb/issues",
+    "email": "charles@charlesread.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charlesread/hapi-auth-fb"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Charles Read",
   "license": "ISC",
   "dependencies": {
     "bluebird": "^3.5.0",
