@@ -1,0 +1,23 @@
+{
+  "name": "hapi-auth-fb",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "bluebird-co": "^2.2.0",
+    "debug": "^2.6.8",
+    "deep-extend": "^0.5.0",
+    "randomatic": "^1.1.7",
+    "request": "^2.81.0",
+    "yar": "^8.1.2"
+  },
+  "devDependencies": {
+    "hapi": "^16.5.0"
+  }
+}
