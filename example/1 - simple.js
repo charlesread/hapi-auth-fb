@@ -51,7 +51,6 @@ server.register(plugins, function (err) {
   })
 
   server.start((err) => {
-
     if (err) {
       throw err
     }
