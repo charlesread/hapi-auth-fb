@@ -16,7 +16,7 @@ Hapi JS plugin that allows "plug-and-play" Facebook authentication in Hapi route
 
 * Set up a Facebook app in their developer portal
 * Get your `client id` and `client secret` from the Facebook development portal once you set up your app.
-* Give Facebook the domain of your app (you _can_ use `localhost` in during development.
+* Give Facebook the domain of your app (you _can_ use `localhost` in during development).
 * Give Facebook the URL of your application.
 
 `hapi-auth-fb` is a typical auth strategy/scheme hapi plugin, meaning that once a user is logged-in their credentials are available in all secured routes via the `request.auth.credentials` object, so you can do _anything_ with that information.  Here's the basic flow when a user requests an endpoint that is secured:
