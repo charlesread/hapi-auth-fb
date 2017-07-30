@@ -7,8 +7,8 @@ Hapi JS plugin that allows "plug-and-play" Facebook authentication in Hapi route
 - [Installation](#installation)
 - [Usage](#usage)
 - [Options](#options)
-- [Required Options](#required-options)
-- [Optional Options](#optional-options)
+  * [Required Options](#required-options)
+  * [Optional Options](#optional-options)
 
 <!-- tocstop -->
 
