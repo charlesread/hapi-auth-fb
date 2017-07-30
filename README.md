@@ -1,6 +1,16 @@
 # hapi-auth-fb
 
-Hapi JS plugin that allows "plug-and-play" Facebook authentication in Hapi routes.  
+Hapi JS plugin that allows "plug-and-play" Facebook authentication in Hapi routes.
+
+<!-- toc -->
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Options](#options)
+- [Required Options](#required-options)
+- [Optional Options](#optional-options)
+
+<!-- tocstop -->
 
 <strong>NOTE</strong>:  This README assumes that you know the basics of Facebook's OAuth 2 implementation.  Perhaps I'll add a bit of a tutorial later, but for now there are many tutorials out there about how to set up a basic Facebook <strong>web</strong> app, it's not hard, basically you need to:
 
