@@ -99,11 +99,13 @@ Wanna see this as a live example?  Check out [http://apps.charlesread.com:8000](
 
 ## Options
 
-## Required Options
+Options exist!
+
+### Required Options
 
 The only "it won't work without them" options are `client_id` and `client_secret`.
 
-## Optional Options
+### Optional Options
 
 * `fields` - a string of comma-separated strings that tells the Facebook API what fields to give you about a user once they are authenticated.  By default `fields` is `first_name,last_name,short_name,email,id`.  <strong>These fields become `request.auth.credentials` in your routes.</strong>  `hapi-auth-fb` hits Facebook's `User` API endpoint once authenticated, so the available fields are listed in the `User` API's [documentation](https://developers.facebook.com/docs/graph-api/reference/user).
 * `scope` - a string of comma-separated strings that represent the permissions that you're asking the user for.  `public_profile,email` by default, see Facebook's [permissions reference](https://developers.facebook.com/docs/facebook-login/permissions) for all available options.
