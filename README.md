@@ -22,7 +22,7 @@ Hapi JS plugin that allows "plug-and-play" Facebook authentication in Hapi route
 `hapi-auth-fb` is a typical auth strategy/scheme hapi plugin, meaning that once a user is logged-in their credentials are available in all secured routes via the `request.auth.credentials` object, so you can do _anything_ with that information.  Here's the basic flow when a user requests an endpoint that is secured:
 
 1.  The plugin sees if the user is already authenticated, if they are, they go right to the requested route (with `request.auth.credentials` fully set, BTW).
-2. If the user has not already authenticated the user will be redirected to a Facebook login page, once they log in they will be asked if they give you app permission to use the things that you're asking for (see the `scope` option in the options section below).  If they authorize you're app they will be redirected back to the originally requested route in your app.
+2. If the user has not already authenticated the user will be redirected to a Facebook login page, once they log in they will be asked if they give you app permission to use the things that you're asking for (see the `scope` option in the options section below).  If they authorize your app they will be redirected back to the originally requested route in your app.
 3. The originally requested route will now have full access, through the `request.auth.credentials` object, to all of the `fields` that you requested access to (see the `fields` option in the options section below).  Simple as that.
 
 ## Installation
