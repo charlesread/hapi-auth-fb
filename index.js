@@ -3,6 +3,7 @@
 const path = require('path')
 const debug = require('debug')('hapi-auth-fb:plugin')
 const co = require('bluebird-co').co
+const Boom = require('boom')
 
 const _options = require(path.join(__dirname, 'lib', 'options.js'))
 const utility = require(path.join(__dirname, 'lib', 'utility.js'))
@@ -50,7 +51,12 @@ const plugin = function (server, options, next) {
           reply.redirect(destination)
         })
           .catch((err) => {
-            console.error(err.message)
+            if (pluginOptions.error) {
+              pluginOptions.error(err)
+            } else {
+              console.error(err.message)
+            }
+            reply(Boom.internal())
           })
       }
     })
@@ -65,23 +71,31 @@ plugin.attributes = {
 internals.scheme = function () {
   const _scheme = {}
   _scheme.authenticate = function (request, reply) {
-    debug('_scheme.authenticate called')
-    if (!request.yar.get('destination')) {
-      debug('destination is not set, setting to request.path')
-      request.yar.set('destination', request.path)
-    }
-    debug('destination: %s', request.yar.get('destination'))
-    const credentials = request.yar.get(pluginOptions.credentialsName)
-    if (credentials) {
-      if (pluginOptions.success && typeof pluginOptions.success === 'function') {
-        pluginOptions.success(credentials)
+    try {
+      debug('_scheme.authenticate called')
+      if (!request.yar.get('destination')) {
+        debug('destination is not set, setting to request.path')
+        request.yar.set('destination', request.path)
       }
-      debug('credentials does exist')
-      reply.continue({credentials})
-    } else {
-      debug('credentials does not exist, redirecting to FB for auth')
-      reply(null, null, {})
-        .redirect(pluginOptions.fb.dialogUrl)
+      debug('destination: %s', request.yar.get('destination'))
+      const credentials = request.yar.get(pluginOptions.credentialsName)
+      if (credentials) {
+        if (pluginOptions.success && typeof pluginOptions.success === 'function') {
+          pluginOptions.success(credentials)
+        }
+        debug('credentials does exist')
+        reply.continue({credentials})
+      } else {
+        debug('credentials does not exist, redirecting to FB for auth')
+        reply(null, null, {})
+          .redirect(pluginOptions.fb.dialogUrl)
+      }
+    } catch (err) {
+      if (pluginOptions.error) {
+        pluginOptions.error(err)
+      } else {
+        console.error(err.message)
+      }
     }
   }
   return _scheme
