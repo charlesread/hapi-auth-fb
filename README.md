@@ -85,6 +85,8 @@ server.register(plugins, function (err) {
 })
 ```
 
+Wanna see this as a live example?  Check out [http://apps.charlesread.com:8000](http://apps.charlesread.com:8000), code is [here](https://github.com/charlesread/hapi-auth-fb-demo).
+
 ## Options
 
 ## Required Options
@@ -98,5 +100,5 @@ The only "it won't work without them" options are `client_id` and `client_secret
 * `version` - a string that determines which version of Facebook's API you want to use, `2.10` by default.
 * `success` - a function with the signature `function(object)` (where `object` is the information that you requested in `fields`.  This function is called upon successful authentication with Facebook, so this is useful for things like persisting user information, it does not have any impact on the plugin itself, it's meant for your purposes.
 * `handlerPath` - a string that is the endpoint that Facebook redirects to after successful authentication.  A user will be immediately redirected to the originally requested endpoint, so at most a user might see this URL for a few milliseconds, changing it is merely a cosmetic concern. By default it's a random string.
-* `yar` - an object that is passed to [`yar`](https://github.com/hapijs/yar) (the plugin that `hapi-auth-fb` uses for session management. See [https://github.com/charlesread/hapi-auth-fb/blob/master/lib/options.js](https://github.com/charlesread/hapi-auth-fb/blob/master/lib/options.js) for defaults.  Be careful.
+* `yar` - an object that is passed to [`yar`](https://github.com/hapijs/yar) (the plugin that `hapi-auth-fb` uses for session management). See [https://github.com/charlesread/hapi-auth-fb/blob/master/lib/options.js](https://github.com/charlesread/hapi-auth-fb/blob/master/lib/options.js) for defaults.  Be careful.
 
