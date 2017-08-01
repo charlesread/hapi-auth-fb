@@ -30,6 +30,13 @@ const plugin = function (server, options, next) {
     }
     server.route({
       method: 'get',
+      path: pluginOptions.loginPath,
+      handler: function (request, reply) {
+        reply.redirect(pluginOptions.fb.dialogUrl)
+      }
+    })
+    server.route({
+      method: 'get',
       path: pluginOptions.handlerPath,
       handler: function (request, reply) {
         const destination = request.yar.get('destination')
