@@ -55,7 +55,7 @@ const plugin = function (server, options, next) {
           debug('userInfo:')
           debug(userInfo)
           request.yar.set(pluginOptions.credentialsName, userInfo)
-          reply.redirect(destination)
+          reply.redirect(destination || pluginOptions.loginSuccessRedirectPath || '/')
         })
           .catch((err) => {
             if (pluginOptions.error) {
