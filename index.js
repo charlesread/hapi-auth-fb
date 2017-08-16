@@ -4,6 +4,7 @@ const path = require('path')
 const debug = require('debug')('hapi-auth-fb:plugin')
 const co = require('bluebird-co').co
 const Boom = require('boom')
+const type = require('type-detect')
 
 const _options = require(path.join(__dirname, 'lib', 'options.js'))
 const utility = require(path.join(__dirname, 'lib', 'utility.js'))
@@ -51,9 +52,17 @@ const plugin = function (server, options, next) {
           debug('userAccessTokenInfo:')
           debug(userAccessTokenInfo)
           const user_id = userAccessTokenInfo.data.user_id
-          const userInfo = yield utility.getUserInfo(userAccessToken, user_id)
+          let userInfo = yield utility.getUserInfo(userAccessToken, user_id)
           debug('userInfo:')
           debug(userInfo)
+          if (type(pluginOptions.transformer) === 'function') {
+            const transformerResults = pluginOptions.transformer(userInfo)
+            if (transformerResults.then) {
+              userInfo = yield transformerResults
+            } else {
+              userInfo = transformerResults
+            }
+          }
           request.yar.set(pluginOptions.credentialsName, userInfo)
           reply.redirect(destination || pluginOptions.loginSuccessRedirectPath || '/')
         })
