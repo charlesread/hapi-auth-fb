@@ -6,8 +6,8 @@ const plugins = [
   {
     register: require('../index'),
     options: {
-      client_id: '315039352290537',
-      client_secret: 'b3f451e22629bcfe269ebc52bc8c200f',
+      client_id: '',
+      client_secret: '',
       success: function (credentials) {
         console.log(credentials)
       },
