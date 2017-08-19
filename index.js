@@ -64,7 +64,7 @@ const plugin = function (server, options, next) {
             }
           }
           request.yar.set(pluginOptions.credentialsName, userInfo)
-          reply.redirect(destination || pluginOptions.loginSuccessRedirectPath || '/')
+          reply.redirect(pluginOptions.loginSuccessRedirectPath || destination || '/')
         })
           .catch((err) => {
             if (pluginOptions.error) {
