@@ -94,7 +94,8 @@ internals.scheme = function () {
       const credentials = request.yar.get(pluginOptions.credentialsName)
       if (credentials) {
         if (pluginOptions.success && typeof pluginOptions.success === 'function') {
-          pluginOptions.success(credentials)
+          const successResults = pluginOptions.success(credentials)
+          // if (successResults.then)
         }
         debug('credentials does exist')
         return h.authenticated({credentials})
