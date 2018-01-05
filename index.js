@@ -18,21 +18,21 @@ plugin.register = async function (server, options) {
   pluginOptions = _options(server, options)
   debug('plugin registered')
   debug('pluginOptions: %j', pluginOptions)
-  server.ext('onRequest', function (request, reply) {
-    debug('received request for %s [%s]', request.path, request.method)
-    reply.continue()
+  server.ext('onRequest', function (req, h) {
+    debug('received request for %s [%s]', req.path, req.method)
+    return h.continue
   })
   server.auth.scheme('facebook', internals.scheme)
   if (!server.registrations['yar']) {
     await server.register({
-      register: require('yar'),
+      plugin: require('yar'),
       options: pluginOptions.yar
     })
   }
   server.route({
     method: 'get',
     path: pluginOptions.loginPath,
-    handler: async function (request, h) {
+    handler: async function (req, h) {
       return h.redirect(pluginOptions.fb.dialogUrl)
     }
   })
@@ -101,7 +101,7 @@ internals.scheme = function () {
       } else {
         debug('credentials does not exist, redirecting to FB for auth')
         const response = h.response()
-        response.redirect(pluginOptions.loginSuccessRedirectPath || destination || '/')
+        response.redirect(pluginOptions.fb.dialogUrl)
         return response.takeover()
       }
     } catch (err) {
