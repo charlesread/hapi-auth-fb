@@ -2,6 +2,8 @@
 
 Hapi JS plugin that allows "plug-and-play" Facebook authentication in Hapi routes.
 
+<strong>NOTE: `hapi-auth-fb` version 1.x and above are NOT compatible with `hapi` version 16.x and below.  `hapi-auth-fb` version 1.x works ONLY with `hapi` versions 17.x and above.  if you need support for `hapi` version 16.x please use `hapi-auth-fb` version 0.1.3</strong>
+
 <!-- toc -->
 
 - [Installation](#installation)
@@ -37,65 +39,61 @@ npm install --save hapi-auth-fb
 'use strict'
 
 const Hapi = require('hapi')
+const hapiAuthFb = require('hapi-auth-fb')
 
-const plugins = [
-  {
-    register: require('hapi-auth-fb'),
-    options: {
-      client_id: '',
-      client_secret: '',
-      success: function (credentials) {
-        console.log(credentials)
-      }
-    }
-  }
-]
-
-const server = new Hapi.Server()
-
-server.connection({
+const server = Hapi.server({
   host: 'localhost',
   port: 8000
 })
 
-server.register(plugins, function (err) {
-  if (err) {
-    throw err
-  }
-  server.auth.strategy('facebook', 'facebook')
-
-  // an insecure route
-  server.route({
-    method: 'GET',
-    path: '/',
-    handler: function (request, reply) {
-      return reply('Welcome to the app! Check out <a href="/secure">/secure</a> to see a secured endpoint.')
+!async function () {
+  await server.register({
+    plugin: hapiAuthFb,
+    options: {
+      client_id: '',
+      client_secret: '',
+      // optional
+      success: function (credentials) {
+        console.log(credentials)
+      },
+      // optional
+      transformer: async function (credentials) {
+        credentials.email = credentials.email.toUpperCase()
+        return credentials
+      }
     }
   })
-
-  // a secure route, will redirect to FB for auth
-  server.route({
+  server.auth.strategy('facebook', 'facebook')
+  await server.route({
     method: 'GET',
     path: '/secure',
     config: {
       auth: 'facebook'
     },
-    handler: function (request, reply) {
-      const credentials = request.auth.credentials
-      return reply(`Hi, ${credentials.first_name}!  Your email address is ${credentials.email} (according to Facebook).`)
+    handler: async function (req, h) {
+      // hapi-auth-fb will set req.auth.credentials to that which was returned by Facebook
+      const credentials = req.auth.credentials
+      return credentials
     }
   })
-
-  server.start((err) => {
-    if (err) {
-      throw err
+  await server.route({
+    method: 'GET',
+    path: '/insecure',
+    handler: async function (req, h) {
+      return '/insecure'
     }
+  })
+  await server.start()
+}()
+  .then(function () {
     console.log('Server running at:', server.info.uri)
   })
-})
+  .catch(function (err) {
+    console.error(err.message)
+    console.error(err.stack)
+    process.exit(1)
+  })
 ```
-
-Wanna see this as a live example?  Check out [http://apps.charlesread.com:8000](http://apps.charlesread.com:8000), code is [here](https://github.com/charlesread/hapi-auth-fb-demo).
 
 ## Options
 
@@ -110,9 +108,9 @@ The only "it won't work without them" options are `client_id` and `client_secret
 * `fields` - a string of comma-separated strings that tells the Facebook API what fields to give you about a user once they are authenticated.  By default `fields` is `first_name,last_name,short_name,email,id`.  <strong>These fields become `request.auth.credentials` in your routes.</strong>  `hapi-auth-fb` hits Facebook's `User` API endpoint once authenticated, so the available fields are listed in the `User` API's [documentation](https://developers.facebook.com/docs/graph-api/reference/user).
 * `scope` - a string of comma-separated strings that represent the permissions that you're asking the user for.  `public_profile,email` by default, see Facebook's [permissions reference](https://developers.facebook.com/docs/facebook-login/permissions) for all available options.
 * `version` - a string that determines which version of Facebook's API you want to use, `2.10` by default.
-* `success` - a function with the signature `function(object)` (where `object` is the information that you requested in `fields`).  This function is called upon successful authentication with Facebook, so this is useful for things like persisting user information, it does not have any impact on the plugin itself, it's meant for your purposes.
-*  `transformer` - a function with the signature `function(object)` (where `object` is the information that you requested in `fields`) that returns the object, or returns a `Promise` that resolves the object, that you want to become `request.auth.credentials`.  Unlike the function assigned to `success`, the results of this function call _will_ have an impact on the plugin, namely whatever the function returns (or whatever the returned `Promise` resolves) will be that which is used to create `request.auth.credentials`.
-* `error` - a function with signature `function(error)` that is called if any errors are encountered during the internal operations of the plugin.
+* `success` - a function with the signature `[async] function(object)` (where `object` is the information that you requested in `fields`).  This function is called upon successful authentication with Facebook, so this is useful for things like persisting user information, it does not have any impact on the plugin itself, it's meant for your purposes.
+*  `transformer` - a function with the signature `[async] function(object)` (where `object` is the information that you requested in `fields`) that returns the object that you want to become `request.auth.credentials`.  Unlike the function assigned to `success`, the results of this function call _will_ have an impact on the plugin, namely whatever the function returns will be that which is used to create `request.auth.credentials`.
+* `error` - a function with signature `[async] function(error)` that is called if any errors are encountered during the internal operations of the plugin.
 * `handlerPath` - a string that is the endpoint that Facebook redirects to after successful authentication.  A user will be immediately redirected to the originally requested endpoint, so at most a user might see this URL for a few milliseconds, changing it is merely a cosmetic concern. By default it's a random string.
 * `loginSuccessRedirectPath` - a string, by default `hapi-auth-fb` will redirect to the originally requested route after successful authentication, you can override that here, if you'd like user to be redirected somewhere else, like `/profile`, for example
 * `yar` - an object that is passed to [`yar`](https://github.com/hapijs/yar) (the plugin that `hapi-auth-fb` uses for session management). See [https://github.com/charlesread/hapi-auth-fb/blob/master/lib/options.js](https://github.com/charlesread/hapi-auth-fb/blob/master/lib/options.js) for defaults.  Be careful.

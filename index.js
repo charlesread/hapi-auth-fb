@@ -56,22 +56,28 @@ plugin.register = async function (server, options) {
         debug('userInfo:')
         debug(userInfo)
         if (type(pluginOptions.transformer) === 'function') {
+          debug('transformer exists and is a function')
           const transformerResults = pluginOptions.transformer(userInfo)
-          if (transformerResults.then) {
+          if (transformerResults && transformerResults.then) {
+            debug('transformer function is thenable')
             userInfo = await transformerResults
           } else {
             userInfo = transformerResults
           }
+        } else {
+          debug('transformer does not exist')
         }
         request.yar.set(pluginOptions.credentialsName, userInfo)
         const response = h.response()
         response.redirect(pluginOptions.loginSuccessRedirectPath || destination || '/')
         return response.takeover()
       } catch (err) {
-        if (pluginOptions.error) {
-          pluginOptions.error(err)
-        } else {
-          console.error(err.message)
+        debug('error encountered in register(): ' + err.message)
+        if (type(pluginOptions.error) === 'function') {
+          const errorResults = pluginOptions(err)
+          if (errorResults && errorResults.then) {
+            await pluginOptions.error(err)
+          }
         }
         return h.unauthenticated(Boom.internal(err.message))
       }
@@ -93,9 +99,16 @@ internals.scheme = function () {
       debug('destination: %s', request.yar.get('destination'))
       const credentials = request.yar.get(pluginOptions.credentialsName)
       if (credentials) {
-        if (pluginOptions.success && typeof pluginOptions.success === 'function') {
+        if (type(pluginOptions.success) === 'function') {
+          debug('success exists and is a function')
           const successResults = pluginOptions.success(credentials)
-          // if (successResults.then)
+          debug(successResults)
+          if (successResults && successResults.then) {
+            debug('success function is thenable')
+            await successResults
+          }
+        } else {
+          debug('success function does not exist')
         }
         debug('credentials does exist')
         return h.authenticated({credentials})
@@ -106,8 +119,12 @@ internals.scheme = function () {
         return response.takeover()
       }
     } catch (err) {
-      if (pluginOptions.error) {
-        pluginOptions.error(err)
+      debug('error encountered in authenticate(): ' + err.message)
+      if (type(pluginOptions.error) === 'function') {
+        const errorResults = pluginOptions(err)
+        if (errorResults && errorResults.then) {
+         await pluginOptions.error(err)
+        }
       }
       return h.unauthenticated(err.message)
     }

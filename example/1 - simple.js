@@ -1,7 +1,8 @@
 'use strict'
 
 const Hapi = require('hapi')
-const hapiAuthFb = require('hapi-auth-fb')
+const hapiAuthFb = require('../index')
+// const hapiAuthFb = require('hapi-auth-fb')
 
 const server = Hapi.server({
   host: 'localhost',
@@ -12,16 +13,14 @@ const server = Hapi.server({
   await server.register({
     plugin: hapiAuthFb,
     options: {
-      client_id: '',
-      client_secret: '',
+      client_id: '315039352290537',
+      client_secret: 'b3f451e22629bcfe269ebc52bc8c200f',
       success: function (credentials) {
         console.log(credentials)
       },
-      transformer: function (credentials) {
-        return new Promise((resolve, reject) => {
-          credentials.email = credentials.email.toUpperCase()
-          return resolve(credentials)
-        })
+      transformer: async function (credentials) {
+        credentials.email = credentials.email.toUpperCase()
+        return credentials
       }
     }
   })
