@@ -1,7 +1,7 @@
 'use strict'
 
 const Hapi = require('hapi')
-const hapiAuthFb = require('../index')
+const hapiAuthFb = require('hapi-auth-fb')
 
 const server = Hapi.server({
   host: 'localhost',
